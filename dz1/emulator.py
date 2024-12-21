@@ -1,110 +1,95 @@
 import os
+import sys
+import zipfile
+import io
+import subprocess
+from pathlib import Path
 
 class ShellEmulator:
-    def __init__(self):
-        self.file_system = {
-            "/": {
-                "type": "dir",
-                "contents": {
-                    "file1.txt": {"type": "file", "contents": "This is file1"},
-                    "dir1": {
-                        "type": "dir",
-                        "contents": {
-                            "file2.txt": {"type": "file", "contents": "This is file2"}
-                        }
-                    }
-                }
-            }
-        }
-        self.current_path = "/"
-        self.home_directory = "/"
+    def __init__(self, hostname, zip_path, startup_script):
+        self.hostname = hostname
+        self.zip_path = zip_path
+        self.startup_script = startup_script
+        self.virtual_fs = {}
+        self.current_dir = "/"
+
+        self.load_virtual_fs()
+
+    def load_virtual_fs(self):
+        with zipfile.ZipFile(self.zip_path, 'r') as zip_ref:
+            for file_info in zip_ref.infolist():
+                self.virtual_fs[file_info.filename] = zip_ref.read(file_info.filename)
 
     def run(self):
+        if self.startup_script:
+            self.execute_script(self.startup_script)
+
         while True:
-            command = input(f"Tema:{self.current_path}$ ").strip()
-            if not command:
-                continue
-            try:
+            command = input(f"{self.hostname}:{self.current_dir} $ ")
+            if command.strip() == "exit":
+                break
+            self.execute_command(command)
+
+    def execute_script(self, script_path):
+        if script_path in self.virtual_fs:
+            script_commands = self.virtual_fs[script_path].decode().splitlines()
+            for command in script_commands:
                 self.execute_command(command)
-            except Exception as e:
-                print(e)
+        else:
+            print(f"Script {script_path} not found.")
 
     def execute_command(self, command):
         parts = command.split()
         cmd = parts[0]
-        args = parts[1:]
 
         if cmd == "ls":
             self.ls()
         elif cmd == "cd":
-            if len(args) == 0:
-                self.cd(self.home_directory)
-            else:
-                self.cd(args[0])
-        elif cmd == "mkdir":
-            if len(args) == 0:
-                raise Exception("Usage: mkdir <directory_name>")
-            else:
-                self.mkdir(args[0])
+            self.cd(parts[1] if len(parts) > 1 else "")
         elif cmd == "echo":
-            self.echo(args)
-        elif cmd == "exit":
-            print("Exiting shell emulator.")
-            exit()
+            self.echo(parts[1:] if len(parts) > 1 else [])
+        elif cmd == "cal":
+            self.cal()
+        elif cmd == "tac":
+            self.tac(parts[1] if len(parts) > 1 else "")
         else:
             print(f"{cmd}: command not found")
 
     def ls(self):
-        current_dir = self._get_current_dir()
-        if not current_dir["contents"]:
-            print("Directory is empty.")
-        else:
-            for name, item in current_dir["contents"].items():
-                print(name)
+        for filename in self.virtual_fs.keys():
+            if filename.startswith(self.current_dir):
+                print(filename)
 
     def cd(self, path):
-        target_path = self._resolve_path(path)
-        target_dir = self._get_directory(target_path)
-
-        if target_dir and target_dir["type"] == "dir":
-            self.current_path = target_path
+        if path == "..":
+            self.current_dir = "/".join(self.current_dir.split("/")[:-1]) or "/"
+        elif path in self.virtual_fs:
+            self.current_dir = path
         else:
-            raise Exception("No such file or directory")
-
-    def mkdir(self, dir_name):
-        current_dir = self._get_current_dir()
-        if dir_name in current_dir["contents"]:
-            raise Exception("Directory already exists")
-        current_dir["contents"][dir_name] = {"type": "dir", "contents": {}}
+            print(f"cd: {path}: No such file or directory")
 
     def echo(self, args):
         print(" ".join(args))
 
-    def _resolve_path(self, path):
-        """Resolve relative or absolute path to an absolute path."""
-        if path.startswith("/"):
-            return os.path.normpath(path)
+    def cal(self):
+        subprocess.run(["cal"])
+
+    def tac(self, filename):
+        if filename in self.virtual_fs:
+            content = self.virtual_fs[filename].decode().splitlines()
+            for line in reversed(content):
+                print(line)
         else:
-            return os.path.normpath(os.path.join(self.current_path, path))
-
-    def _get_current_dir(self):
-        """Get the directory object for the current path."""
-        return self._get_directory(self.current_path)
-
-    def _get_directory(self, path):
-        """Traverse the file system and return the directory at the given path."""
-        parts = path.strip("/").split("/")
-        current = self.file_system["/"]
-        for part in parts:
-            if not part:  # Skip empty parts for root
-                continue
-            if part in current["contents"] and current["contents"][part]["type"] == "dir":
-                current = current["contents"][part]
-            else:
-                return None
-        return current
-
+            print(f"tac: {filename}: No such file")
 
 if __name__ == "__main__":
-    emulator = ShellEmulator()
+    if len(sys.argv) != 4:
+        print("Usage: python shell_emulator.py <hostname> <zip_path> <startup_script>")
+        sys.exit(1)
+
+    hostname = sys.argv[1]
+    zip_path = sys.argv[2]
+    startup_script = sys.argv[3]
+
+    emulator = ShellEmulator(hostname, zip_path, startup_script)
     emulator.run()
