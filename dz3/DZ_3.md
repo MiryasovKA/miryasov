@@ -31,11 +31,11 @@ set имя = значение;
 ## Запуск
 ## .
 ## .
-![Задание 1](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_3/1.jpg)
+![Задание 1](https://github.com/MiryasovKA/miryasov/blob/main/dz3/1.jpg)
 
 ## Работа программы
 
-![Задание 1](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_3/1.png)
-![Задание 1](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_3/2.png)
-![Задание 1](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_3/3.png)
-![Задание 1](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_3/4.png)
+![Задание 1](https://github.com/MiryasovKA/miryasov/blob/main/dz3/1.png)
+![Задание 1](https://github.com/MiryasovKA/miryasov/blob/main/dz3/2.png)
+![Задание 1](https://github.com/MiryasovKA/miryasov/blob/main/dz3/3.png)
+![Задание 1](https://github.com/MiryasovKA/miryasov/blob/main/dz3/4.png)
