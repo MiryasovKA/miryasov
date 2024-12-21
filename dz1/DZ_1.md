@@ -25,14 +25,14 @@ zip. Эмулятор должен работать в режиме CLI.
 
 ## Создание zip
 
-![Задание 1](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_1/1.jpg)
+![Задание 1](https://github.com/MiryasovKA/miryasov/blob/main/dz1/1.jpg)
 
 ## Создание структуры эмулятора
 
-![Задание 2](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_1/2.jpg)
+![Задание 2](https://github.com/MiryasovKA/miryasov/blob/main/dz1/2.jpg)
 
 ## Прохождение тестов и запуск эмулятора
 
-![Задание 3](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_1/3.jpg)
-![Задание 3](https://github.com/teeeema/mingazutdinov.a.r/blob/main/DZ_1/4.jpg)
+![Задание 3](https://github.com/MiryasovKA/miryasov/blob/main/dz1/3.jpg)
+![Задание 3](https://github.com/MiryasovKA/miryasov/blob/main/dz1/4.jpg)
 
